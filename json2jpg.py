@@ -19,9 +19,8 @@ for image in data['images']:
     image_id = image['id']
     image_path = os.path.join('images', image['file_name'])
     img = Image.open(image_path)
+    img = img.convert('RGB')
     mask = Image.new('RGB', img.size, color=(0, 0, 0))
-
-    print(img.mode, mask.mode)
 
     # Draw polygons for all categories in the image
     for annotation in data['annotations']:
@@ -34,7 +33,7 @@ for image in data['images']:
             draw.polygon(polygon, outline=color, fill=color)
     
     # Blend original image with mask image
-    blended = Image.blend(img, mask, alpha=0.5)
+    blended = Image.blend(img, mask, alpha=0.1)
     
     # Save blended image with original filename in a different directory
     image_name = os.path.basename(image_path)
