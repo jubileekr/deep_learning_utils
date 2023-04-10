@@ -1,35 +1,43 @@
 import json
 import os
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageChops
 
 # Load JSON data from file
 with open('annotations/instances_default.json') as f:
     data = json.load(f)
 
-# Save indexed original images
+# Map category IDs to RGB colors
+category_colors = {
+    1: (255, 0, 0),   # Red
+    2: (0, 255, 0),   # Green
+    3: (0, 0, 255),   # Blue
+    4: (255, 255, 0)  # Yellow
+}
+
+# Create blended image
 for image in data['images']:
+    image_id = image['id']
     image_path = os.path.join('images', image['file_name'])
-    img = Image.open(image_path).convert('L')
+    img = Image.open(image_path)
+    mask = Image.new('RGB', img.size, color=(0, 0, 0))
 
+    print(img.mode, mask.mode)
 
-# Create mask image
-for annotation in data['annotations']:
-    image_path = os.path.join('images', str(annotation['image_id']) + '.bmp')  # update file extension
-    img = Image.new('L', (384, 320), color=0)  # set image dimensions
+    # Draw polygons for all categories in the image
+    for annotation in data['annotations']:
+        if annotation['image_id'] == image_id:
+            category_id = annotation['category_id']
+            color = category_colors.get(category_id)
+            segmentation = annotation['segmentation'][0]
+            polygon = [(segmentation[i], segmentation[i+1]) for i in range(0, len(segmentation), 2)]
+            draw = ImageDraw.Draw(mask)
+            draw.polygon(polygon, outline=color, fill=color)
     
-    # Create polygon mask
-    segmentation = annotation['segmentation'][0]
-    polygon = [(segmentation[i], segmentation[i+1]) for i in range(0, len(segmentation), 2)]
+    # Blend original image with mask image
+    blended = Image.blend(img, mask, alpha=0.5)
     
-    # Draw mask
-    draw = ImageDraw.Draw(img)
-    draw.polygon(polygon, outline=1, fill=1)
-    
-    # Save mask image with original filename in a different directory
-    image_name = next((image['file_name'] for image in data['images'] if image['id'] == annotation['image_id']), None)
-    if image_name is None:
-        continue
-    save_path = os.path.join('labels', image_name)
-    img = img.point(lambda x: x * 255)  # replace 1 with 255
-    img.save(save_path)
+    # Save blended image with original filename in a different directory
+    image_name = os.path.basename(image_path)
+    save_path = os.path.join('blended', image_name)
+    blended.save(save_path)
     print(f"Created {save_path}")
