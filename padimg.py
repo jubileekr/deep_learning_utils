@@ -15,7 +15,7 @@ for filename in os.listdir(input_dir):
         width, height = img.size
 
         # Calculate the amount of padding needed
-        padding_height = 384 - height
+        padding_height = 0  # 384 - height
 
         # Create a new image with the desired size and fill it with white color
         new_img = Image.new("L", (width, 384), 255)
