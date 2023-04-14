@@ -1,8 +1,8 @@
 import os
 from PIL import Image
 
-input_dir = "/root/PIDNet/data/icu/train/images_o"
-output_dir = "/root/PIDNet/data/icu/train/images"
+input_dir = "/root/PIDNet/data/tooth/train/images_o"
+output_dir = "/root/PIDNet/data/tooth/train/images"
 
 # Loop over all files in the input directory
 for filename in os.listdir(input_dir):
