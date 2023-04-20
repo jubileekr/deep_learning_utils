@@ -31,12 +31,15 @@ for image in data['images']:
             polygon = [(segmentation[i], segmentation[i+1]) for i in range(0, len(segmentation), 2)]
             draw = ImageDraw.Draw(mask)
             draw.polygon(polygon, outline=color, fill=color)
-    
+
     # Blend original image with mask image
     blended = Image.blend(img, mask, alpha=0.1)
-    
+
     # Save blended image with original filename in a different directory
     image_name = os.path.basename(image_path)
     save_path = os.path.join('blended', image_name)
     blended.save(save_path)
     print(f"Created {save_path}")
+
+    save_path2 = os.path.join('labels', image_name)
+    mask.save(save_path2)
