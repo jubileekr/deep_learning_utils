@@ -2,8 +2,8 @@ import cv2
 import os
 
 # Define input and output directories
-input_dir = "/mnt/d/datasets/icu/imgs/train_o"
-output_dir = "/mnt/d/datasets/icu/imgs/train"
+input_dir = "/mnt/d/datasets/icu/imgs/val_o"
+output_dir = "/mnt/d/datasets/icu/imgs/val"
 
 
 output_size = (224, 224)
@@ -43,3 +43,5 @@ for filename in os.listdir(input_dir):
 
         # Save the image to the output directory
         cv2.imwrite(os.path.join(output_dir, filename), resized_image)
+
+
