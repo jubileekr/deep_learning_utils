@@ -1,39 +1,28 @@
 import os
-from PIL import Image
-import numpy as np
+import cv2
 
-# Specify the folder containing the BMP files
-bmp_folder = "./val_o"
+input_folder = '/mnt/d/datasets/icu/imgs/val_o'
+output_folder = '/mnt/d/datasets/icu/imgs/val'
 
-# Specify the folder to save the RGB files
-rgb_folder = "./val"
+# create output folder if it does not exist
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
-# Loop over all BMP files in the folder
-for filename in os.listdir(bmp_folder):
-    if filename.endswith(".bmp"):
-        # Load the Bayer pattern image
-        bmp_path = os.path.join(bmp_folder, filename)
-        img = Image.open(bmp_path)
+# loop over all BMP files in input folder
+for filename in os.listdir(input_folder):
+    if not filename.endswith('.bmp'):
+        continue
+    print(f"Processing {filename}...")
+    bayer_img_path = os.path.join(input_folder, filename)
 
-        # Convert to numpy array
-        arr = np.array(img)
+    # read bayer pattern image using OpenCV
+    bayer_img = cv2.imread(bayer_img_path, cv2.IMREAD_GRAYSCALE)
 
-        # Split the Bayer pattern into separate channels
-        # Note that we assume the Bayer pattern is RGGB
-        r = arr[::2, ::2]
-        g1 = arr[1::2, ::2]
-        g2 = arr[::2, 1::2]
-        b = arr[1::2, 1::2]
+    # interpolate missing color channels using OpenCV
+    rgb_img = cv2.cvtColor(bayer_img, cv2.COLOR_BayerGRBG2RGB)
 
-        # Interpolate green values
-        g = (g1 + g2) // 2
+    # save the RGB image as a BMP file in the output folder
+    output_path = os.path.join(output_folder, filename)
+    cv2.imwrite(output_path, rgb_img)
 
-        # Combine into RGB image
-        rgb_arr = np.dstack((r, g, b))
-
-        # Convert back to PIL Image
-        rgb_img = Image.fromarray(rgb_arr.astype('uint8'), 'RGB')
-
-        # Save the RGB image to the same name in the RGB folder
-        rgb_path = os.path.join(rgb_folder, filename)
-        rgb_img.save(rgb_path)
+print("Done!")
