@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageDraw, ImageChops
 
 # Load JSON data from file
-with open('instances_default_v.json') as f:
+with open('instances_default_t.json') as f:
     data = json.load(f)
 
 # Map category IDs to RGB colors
@@ -17,7 +17,7 @@ category_colors = {
 # Create blended image
 for image in data['images']:
     image_id = image['id']
-    image_pathrgb = os.path.join('imgs/val', image['file_name'])
+    image_pathrgb = os.path.join('imgs/train', image['file_name'])
     image_pathL = image_pathrgb
     #img = Image.open(image_pathrgb)
     maskrgb = Image.new('RGB', (384,320), color=(0, 0, 0))
