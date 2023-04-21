@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageDraw, ImageChops
 
 # Load JSON data from file
-with open('annotations/instances_default.json') as f:
+with open('instances_default_v.json') as f:
     data = json.load(f)
 
 # Map category IDs to RGB colors
@@ -17,11 +17,11 @@ category_colors = {
 # Create blended image
 for image in data['images']:
     image_id = image['id']
-    #image_pathrgb = os.path.join('images', image['file_name'])
-    image_pathL = os.path.join('images', image['file_name'])
-    img = Image.open(image_pathrgb)
-    maskrgb = Image.new('RGB', img.size, color=(0, 0, 0))
-    maskL = Image.new('L', img.size)
+    image_pathrgb = os.path.join('imgs/val', image['file_name'])
+    image_pathL = image_pathrgb
+    #img = Image.open(image_pathrgb)
+    maskrgb = Image.new('RGB', (384,320), color=(0, 0, 0))
+    maskL = Image.new('L', (384,320))
 
     # Draw polygons for all categories in the image
     for annotation in data['annotations']:
@@ -41,12 +41,12 @@ for image in data['images']:
     # Save blended image with original filename in a different directory
     #image_namergb = os.path.basename(image_pathrgb)
     image_nameL = os.path.basename(image_pathL)
+
+    base_name, ext = os.path.splitext(image_nameL)
+
+# Set the file path and name for saving the image as a .png file
+    save_pathL = os.path.join('pngs', base_name + '.png')
     #save_pathrgb = os.path.join('blended', image_namergb)
-    save_pathL = os.path.join('blended', image_nameL)
     #blended.save(save_pathrgb)
     maskL.save(save_pathL)
-    
-    print(f"Created {save_path}")
-
-    save_path2 = os.path.join('labels', image_name)
-    maskd.save(save_path2)
+~
