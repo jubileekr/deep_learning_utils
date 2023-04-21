@@ -2,17 +2,17 @@ import cv2
 import os
 
 # Define input and output directories
-input_dir = "/mnt/d/datasets/icu/labels/val_n"
-output_dir = "/mnt/d/datasets/icu/labels/val"
+input_dir = "/mnt/d/datasets/icu/pngs"
+output_dir = "/mnt/d/datasets/icu/png2"
 
 
 output_size = (224, 224)
 
 # Loop over all bmp files in the input directory
 for filename in os.listdir(input_dir):
-    if filename.endswith(".bmp"):
+    if filename.endswith(".png"):
         # Read the image file in color mode
-        image = cv2.imread(os.path.join(input_dir, filename), cv2.IMREAD_COLOR)
+        image = cv2.imread(os.path.join(input_dir, filename), cv2.IMREAD_GRAYSCALE)
 
         # Calculate the new size while preserving the aspect ratio
         height, width = image.shape[:2]
@@ -36,12 +36,10 @@ for filename in os.listdir(input_dir):
             left_pad = 0
             right_pad = 0
             pad = (top_pad, bottom_pad, left_pad, right_pad)
-            resized_image = cv2.copyMakeBorder(resized_image, *pad, cv2.BORDER_CONSTANT, value=[0, 255, 255])
+            resized_image = cv2.copyMakeBorder(resized_image, *pad, cv2.BORDER_CONSTANT, value=4)
 
         # Mirror the remaining empty space from the edge
 #        mirrored_image = cv2.flip(resized_image, 1)
 
         # Save the image to the output directory
         cv2.imwrite(os.path.join(output_dir, filename), resized_image)
-
-
