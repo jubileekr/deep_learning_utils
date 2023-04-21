@@ -49,4 +49,3 @@ for image in data['images']:
     #save_pathrgb = os.path.join('blended', image_namergb)
     #blended.save(save_pathrgb)
     maskL.save(save_pathL)
-~
